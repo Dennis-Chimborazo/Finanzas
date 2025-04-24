@@ -4,9 +4,8 @@
     "type": "split",
     "children": [
       {
-        "id": "4cd5b0c356ee04f2",
+        "id": "d51cf5aa0441d872",
         "type": "tabs",
-        "dimension": 37.25868725868725,
         "children": [
           {
             "id": "4b0a61f4602b2252",
@@ -14,21 +13,14 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Backend/Casos de Uso/Registrarse.md",
+                "file": "Backend/Casos de Uso/Registrar Aportes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Registrarse"
+              "title": "Registrar Aportes"
             }
-          }
-        ]
-      },
-      {
-        "id": "d51cf5aa0441d872",
-        "type": "tabs",
-        "dimension": 62.74131274131274,
-        "children": [
+          },
           {
             "id": "fea9a1bdaa455e4a",
             "type": "leaf",
@@ -41,6 +33,26 @@
               },
               "icon": "lucide-file",
               "title": "Registro de Aportes"
+            }
+          }
+        ]
+      },
+      {
+        "id": "6556102524db6cbf",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d030ed74c69f5169",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Backend/docs/Registro de Usuario.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Registro de Usuario"
             }
           }
         ]
@@ -190,11 +202,13 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "fea9a1bdaa455e4a",
+  "active": "d030ed74c69f5169",
   "lastOpenFiles": [
     "Backend/Casos de Uso/Registrarse.md",
-    "Backend/docs/Registro de Aportes.md",
+    "Backend/docs/Mostrar Reportes.md",
     "Backend/Casos de Uso/Registrar Aportes.md",
+    "Backend/Casos de Uso/Mostrar reportes.md",
+    "Backend/docs/Registro de Aportes.md",
     "Backend/docs/Integración con Firebase Authentication.md",
     "Backend/Casos de Uso/Iniciar Sesión.md",
     "Backend/docs/Crear Metas de Ahorro.md",
