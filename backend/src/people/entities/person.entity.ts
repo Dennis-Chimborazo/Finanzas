@@ -1,22 +1,24 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({name:'persons'})
+@Entity({ name: 'persons' })
 export class Person {
     @PrimaryGeneratedColumn()
-    personId:number;
+    personId: number;
     @Column()
-    identificationType:string;
+    identificationType: string;
+    @Column({ unique: true })
+    dni: string;
     @Column()
-    name:string;
+    name: string;
     @Column()
-    lastName:string;
+    lastName: string;
     @Column()
-    DateOfBirth:Date;
+    DateOfBirth: Date;
     @Column()
-    addres:string;
+    addres: string;
     @Column()
-    phoneNumber:string;
+    phoneNumber: string;
     @Column()
-    profileFotoUrl:string;
+    profileFotoUrl: string;
 
 }
