@@ -12,7 +12,7 @@ export class UserService {
     private userRepository: Repository<User>
   ) { }
 
-  async create(uid, email) {
+  async create(uid:string, email:string) {
     const user = this.userRepository.create({
       firebaseUid: uid,
       email: email,
