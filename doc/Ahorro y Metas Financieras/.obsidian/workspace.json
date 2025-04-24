@@ -6,6 +6,7 @@
       {
         "id": "d51cf5aa0441d872",
         "type": "tabs",
+        "dimension": 42.374517374517374,
         "children": [
           {
             "id": "4b0a61f4602b2252",
@@ -27,19 +28,21 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Backend/docs/Registro de Aportes.md",
+                "file": "Backend/Casos de Uso/Registrarse.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Registro de Aportes"
+              "title": "Registrarse"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       },
       {
         "id": "6556102524db6cbf",
         "type": "tabs",
+        "dimension": 57.625482625482626,
         "children": [
           {
             "id": "d030ed74c69f5169",
@@ -47,12 +50,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Backend/docs/Registro de Usuario.md",
+                "file": "Backend/docs/Enviar Recordatorio de Aporte a Meta de Ahorro.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Registro de Usuario"
+              "title": "Enviar Recordatorio de Aporte a Meta de Ahorro"
             }
           }
         ]
@@ -205,14 +208,16 @@
   "active": "d030ed74c69f5169",
   "lastOpenFiles": [
     "Backend/Casos de Uso/Registrarse.md",
+    "Backend/docs/Enviar Recordatorio de Aporte a Meta de Ahorro.md",
+    "Backend/Casos de Uso/Enviar Recordatorio de Aporte a Meta de Ahorro.md",
+    "Backend/docs/Registro de Aportes.md",
+    "Backend/docs/Registro de Usuario.md",
     "Backend/docs/Mostrar Reportes.md",
     "Backend/Casos de Uso/Registrar Aportes.md",
     "Backend/Casos de Uso/Mostrar reportes.md",
-    "Backend/docs/Registro de Aportes.md",
     "Backend/docs/Integración con Firebase Authentication.md",
     "Backend/Casos de Uso/Iniciar Sesión.md",
     "Backend/docs/Crear Metas de Ahorro.md",
-    "Backend/docs/Registro de Usuario.md",
     "Backend/Casos de Uso/Crear Metas de Ahorro.md",
     "docs/Untitled.md",
     "Casos de Uso.md",
