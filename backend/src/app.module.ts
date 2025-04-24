@@ -8,9 +8,10 @@ import { ContributionModule } from './contribution/contribution.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FirebaseModule } from './firebase/firebase.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [PeopleModule, UserModule, AccountModule, DatabaseModule, SavingsGoalModule, ContributionModule,FirebaseModule],
+  imports: [PeopleModule, UserModule, AccountModule, DatabaseModule, SavingsGoalModule, ContributionModule,FirebaseModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
