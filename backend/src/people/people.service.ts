@@ -7,6 +7,11 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class PeopleService {
+  async findOneById(personId: number) {
+    const personfinded=await this.personRepository.findOneBy({personId:personId});
+    if(!personfinded)throw new NotFoundException("no find the person");
+    return personfinded;
+  }
   constructor(
     @InjectRepository(Person)
     private readonly personRepository: Repository<Person>

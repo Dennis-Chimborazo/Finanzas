@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreatePersonDto } from 'src/people/dto/create-person.dto';
 import { PeopleService } from 'src/people/people.service';
+import { CreateAccountDto } from 'src/account/dto/create-account.dto';
 
 @Injectable()
 export class UserService {
@@ -41,6 +42,7 @@ export class UserService {
     return userUpdate;
   }
 
+  
 
   findAll() {
     return `This action returns all user`;
