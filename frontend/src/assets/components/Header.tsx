@@ -1,16 +1,31 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Header = () => {
+const Header: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       {/* Top Navigation */}
       <div className="bg-white border-b px-6 py-3 flex flex-col md:flex-row justify-between items-center text-sm text-blue-900 shadow-sm gap-2 md:gap-0">
         <div className="flex items-center space-x-4">
-          <button className="text-lg font-semibold hover:text-blue-600 transition-colors">☰ Menu</button>
+          <button className="text-lg font-semibold hover:text-blue-600 transition-colors">
+            ☰ Menu
+          </button>
         </div>
+
         <div className="flex items-center gap-4 text-sm">
           <span className="hidden sm:inline-block text-xl">🔍</span>
-          <a href="#" className="hover:underline hover:text-blue-600 transition-colors">Open your account</a>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-1 rounded-full shadow-sm transition-all duration-200">
+          <a
+        onClick={() => navigate('/register')}
+        className="hover:underline hover:text-blue-600 transition-colors cursor-pointer"
+      >
+        Open your account
+      </a>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-1 rounded-full shadow-sm transition-all duration-200"
+            onClick={() => navigate('/Login')}
+          >
             Client Access
           </button>
         </div>
