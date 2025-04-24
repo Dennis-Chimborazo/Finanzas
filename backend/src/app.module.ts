@@ -7,9 +7,10 @@ import { SavingsGoalModule } from './savings_goal/savings_goal.module';
 import { ContributionModule } from './contribution/contribution.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { FirebaseModule } from './firebase/firebase.module';
 
 @Module({
-  imports: [PeopleModule, UserModule, AccountModule, DatabaseModule, SavingsGoalModule, ContributionModule],
+  imports: [PeopleModule, UserModule, AccountModule, DatabaseModule, SavingsGoalModule, ContributionModule,FirebaseModule],
   controllers: [AppController],
   providers: [AppService],
 })
