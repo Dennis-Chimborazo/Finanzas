@@ -1,0 +1,223 @@
+{
+  "main": {
+    "id": "396af73b4c12ba79",
+    "type": "split",
+    "children": [
+      {
+        "id": "a36b699879c8ef8d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a64387a44da96ee1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Backend/docs/Crear Metas de Ahorro.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Crear Metas de Ahorro"
+            }
+          }
+        ]
+      },
+      {
+        "id": "b36e8aa8d451b8cc",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "20bd5538dc3a8eb9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Backend/Casos de Uso/Registrarse.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Registrarse"
+            }
+          },
+          {
+            "id": "baf80aba5e6fd7a6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Backend/docs/Integración con Firebase Authentication.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Integración con Firebase Authentication"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "d8f9cacdc20ec690",
+    "type": "split",
+    "children": [
+      {
+        "id": "a22e4b384725b509",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "696e4c43ce6ab290",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "7db8858b985de997",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "bec1131f9c337cbb",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "right": {
+    "id": "39d07a82c44e82a7",
+    "type": "split",
+    "children": [
+      {
+        "id": "39783701e45df398",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "47596324e20d4e21",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Backend/docs/Crear Metas de Ahorro.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Crear Metas de Ahorro"
+            }
+          },
+          {
+            "id": "de2cf6ef4829eb91",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Backend/docs/Crear Metas de Ahorro.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Crear Metas de Ahorro"
+            }
+          },
+          {
+            "id": "9a84d88122f6bb24",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "51ef22d176c74b44",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Backend/docs/Crear Metas de Ahorro.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Crear Metas de Ahorro"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "a64387a44da96ee1",
+  "lastOpenFiles": [
+    "Backend/docs/Integración con Firebase Authentication.md",
+    "Backend/docs/Crear Metas de Ahorro.md",
+    "Backend/docs/Registro de Usuario.md",
+    "Backend/Casos de Uso/Crear Metas de Ahorro.md",
+    "Backend/Casos de Uso/Registrarse.md",
+    "Backend/Casos de Uso/Iniciar Sesión.md",
+    "docs/Untitled.md",
+    "Casos de Uso.md",
+    "Backend/Casos de Uso",
+    "Backend/workFlow",
+    "Backend/docs",
+    "Backend/Diagramas",
+    "Backend",
+    "desktop.ini"
+  ]
+}
