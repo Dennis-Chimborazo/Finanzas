@@ -3,12 +3,15 @@
 Registrarse
 
 ## Descripción
+
 Este caso de uso permite a una persona crear una cuenta en el sistema bancario proporcionando la información personal requerida. El proceso incluye la validación de datos y la creación de registros en las entidades correspondientes.
 
 ## Actores
+
 - **Principal**: Persona no registrada
 
 ## Precondiciones
+
 - El usuario no debe tener una cuenta existente en el sistema.
 - El sistema debe estar operativo y accesible.
 
