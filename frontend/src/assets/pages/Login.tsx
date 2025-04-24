@@ -1,30 +1,41 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FirebaseAuthService from '../../util/firebasetoken';
+import {Toaster,toast} from "sonner";
+
+
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
+  
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const login = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); 
+    let resToken: string | null = null;// Aquí puedes usar let porque luego asignarás el valor
 
-    if (!email || !password) {
-      setError('Please fill in both fields.');
-      return;
-    }
+  if (email==''||password == '') { 
+    toast.error("Complete all required fields");
+    
+  }else{
+    resToken = await FirebaseAuthService.loginAndGetToken(email, password);
+    if (resToken) {
+      localStorage.setItem("login",JSON.stringify({
+        login: true,
+        token: resToken
+      }));
 
-    if (email === 'admin@example.com' && password === '123456') {
-      setError('');
-      navigate('/home');
     } else {
-      setError('Incorrect email or password.');
+    toast.error("Incorrect username or password ");
     }
-  };
+  }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-green-100 flex items-center justify-center px-4">
+        <Toaster position="top-center" visibleToasts={1} duration={3000} richColors />
       <div className="grid grid-cols-1 md:grid-cols-2 w-full max-w-5xl bg-white rounded-xl shadow-xl overflow-hidden">
         {/* Illustration & Info */}
         <div className="bg-gradient-to-br from-green-200 to-green-100 p-10 flex flex-col justify-center">
@@ -58,7 +69,7 @@ const Login: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email address
@@ -86,6 +97,7 @@ const Login: React.FC = () => {
             </div>
 
             <button
+              onClick={login}
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition"
             >
