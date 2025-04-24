@@ -16,11 +16,12 @@ export class UserService {
     private readonly personService: PeopleService,
   ) { }
 
-  async create(uid: string, email: string) {
+  async create(uid: string, email: string, createPersonDTO: CreatePersonDto) {
+    const personCreated=await this.personService.create(createPersonDTO);
     const user = this.userRepository.create({
       firebaseUid: uid,
       email: email,
-      personId: null,
+      personId: personCreated,
     })
 
     return this.userRepository.save(user);
@@ -30,16 +31,6 @@ export class UserService {
     const user = await this.userRepository.findOne({ where: { firebaseUid: uid }, relations: ['personId'] });
     if (!user) throw new NotFoundException('ERROR: user not Found');
     return user;
-  }
-
-  async createUserData(createPersonDto: CreatePersonDto, uid: string) {
-    const personCreated = await this.personService.create(createPersonDto);
-    const user = await this.userRepository.findOneBy({ firebaseUid: uid });
-    if (!user) throw new NotFoundException("The user could not be created")
-    user.personId = personCreated;
-    if (!user.userId) throw new NotFoundException("User ID is undefined");
-    const userUpdate = await this.userRepository.update(user.userId, user);
-    return userUpdate;
   }
 
   

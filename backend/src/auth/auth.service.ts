@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreatePersonDto } from 'src/people/dto/create-person.dto';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -9,12 +10,12 @@ export class AuthService {
   async login(email: string, userUid: string) {
     let user = await this.userService.findOneUid(userUid);
     if (!user) {
-      user = await this.userService.create(userUid, userUid)
+      throw new NotFoundException("This user does not exist, please register");
     }
     return user;
   }
-  async register(userUid: string, email: string) {
-    return await this.userService.create(userUid, email)
+  async register(userUid: string, email: string, createPersonDTO: CreatePersonDto) {
+    return await this.userService.create(userUid, email,createPersonDTO)
 
   }
 
