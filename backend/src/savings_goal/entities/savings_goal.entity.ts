@@ -1,5 +1,6 @@
 import { Account } from "src/account/entities/account.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Contribution } from "src/contribution/entities/contribution.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name:'savings_goals'})
 export class SavingsGoal {
@@ -19,4 +20,6 @@ export class SavingsGoal {
     end_date:Date;
     @ManyToOne(()=>Account,(account)=>account.accountId)
     account:Account;   
+    @OneToMany(() => Contribution, (contribution) => contribution.goalId)
+    contributions: Contribution[]; 
 }

@@ -4,10 +4,51 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
 import { QueryRunner, Repository } from 'typeorm';
 import { PeopleService } from 'src/people/people.service';
-import { Person } from 'src/people/entities/person.entity';
+import { SavingsGoal } from 'src/savings_goal/entities/savings_goal.entity';
+import { Contribution } from 'src/contribution/entities/contribution.entity';
 
 @Injectable()
 export class AccountService {
+
+
+ async findAllAccountsByIdPerson(id: number) {
+  try {
+    // Create a query to get accounts with their related savings goals and optional contributions
+    const accounts = await this.accountRepository
+      .createQueryBuilder('a')
+      .select([
+        'sg.goal_id',
+        'sg.goal_name',
+        'a.accountNumber',
+        'a.accountType',
+        'a.current_balance',
+        'a.status',
+      ])
+      .innerJoin('a.savingsGoals', 'sg')  // Only include accounts that have savings goals
+      .leftJoinAndSelect('sg.contributions', 'c')  // Optionally include contributions if they exist
+      .where('a.personId = :id', { id })  // Filter accounts by person ID
+      .getMany();
+
+    // Format the result to only include needed fields from the first savings goal
+    const result = accounts.map(account => ({
+      goal_id: account.savingsGoals[0]?.goal_id,
+      goal_name: account.savingsGoals[0]?.goal_name,
+      accountNumber: account.accountNumber,
+      accountType: account.accountType,
+      current_balance: account.current_balance,
+      status: account.status,
+    }));
+
+    return result;
+  } catch (error) {
+    console.error(error);
+    // Throw a service error if something goes wrong
+    throw new ServiceUnavailableException('Try again later');
+  }
+}
+
+  
+
 
 
 
@@ -28,35 +69,35 @@ export class AccountService {
       const existing = await this.findAccountByTypeAndUserId(createAccountDto.accountType, peopleFound.personId);
       if (existing) throw new ConflictException(`You already have an account of type: ${createAccountDto.accountType}`);
     }
-  
+
     const shouldManageTransaction = !queryRunner;
     if (!queryRunner) {
       queryRunner = this.accountRepository.manager.connection.createQueryRunner();
       await queryRunner.connect();
       await queryRunner.startTransaction();
     }
-  
+
     try {
       const account = this.accountRepository.create({
         ...createAccountDto,
         personId: peopleFound,
       });
-  
+
       const accountCreated = await queryRunner.manager.save(account);
       if (!accountCreated) throw new NotFoundException('Account could not be created');
-  
+
       let cero = '0';
       for (let i = 0; i < (accountCreated.accountId?.toString().length ?? 0); i++) {
         cero = cero + '0';
       }
-  
+
       accountCreated.accountNumber = cero + accountCreated.accountId;
       await queryRunner.manager.update(Account, accountCreated.accountId, accountCreated);
-  
+
       if (shouldManageTransaction) {
         await queryRunner.commitTransaction();
       }
-  
+
       return accountCreated;
     } catch (error) {
       console.error(error);
@@ -85,5 +126,5 @@ export class AccountService {
   }
 
 
- 
+
 }
