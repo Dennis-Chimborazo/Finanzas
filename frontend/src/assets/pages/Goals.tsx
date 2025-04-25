@@ -1,15 +1,36 @@
 import React, { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useGoals } from '../context/GoalsContext';
+import ApiService from "../service/ApiService";
+import {Toaster,toast} from "sonner";
 
 const Goals: React.FC = () => {
   const { goals, addGoal } = useGoals();
   const [form, setForm] = useState({
-    name: '',
+    goal_name: '',
     category: '',
-    target: '',
-    deadline: '',
+    description: '',
+    target_amount: 0,
+    start_date: '',
+    end_date: '',
+    personId: 0,
   });
+
+  const getId = (): number | null => {
+    const loginData = localStorage.getItem("user");
+  
+    if (loginData) {
+      const parsedData = JSON.parse(loginData);
+  
+      if (parsedData && parsedData.personData && parsedData.personData.personId) {
+        return parsedData.personData.personId;
+      }
+    }
+  
+    return null;
+  };
+
+
   const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -18,18 +39,32 @@ const Goals: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const today = new Date().toISOString().split('T')[0];
-    if (form.deadline < today) {
-      setError('La fecha límite no puede estar en el pasado.');
-      return;
-    }
-    addGoal({
-      ...form,
-      target: parseFloat(form.target).toFixed(2) // Asegura formato de número
-    });
-    setForm({ name: '', category: '', target: '', deadline: '' });
-    setError('');
+    
   };
+
+  const saveGoal = async () => {
+    if (form.category==''||form.description==''||form.end_date==''||form.goal_name==''
+      ||form.personId==0||form.start_date==''||form.target_amount==0  ) {
+            toast.error("Complete all required fields");
+    }else{
+    const id = getId();
+    const dataToSend = {
+      ...form,
+      target_amount: Number(form.target_amount),
+      personId: Number(id.personId),
+    };
+  
+    try {
+      const response = await ApiService.save("savings-goal", dataToSend);
+      console.log("Meta guardada:", response);
+    } catch (error) {
+      console.error("Error al guardar la meta:", error);
+    }
+  }
+
+  };
+  
+  
 
   return (
     <div className="min-h-screen flex bg-[#F9FAFB]">
@@ -37,6 +72,7 @@ const Goals: React.FC = () => {
 
       <main className="flex-1 px-6 md:px-10 py-8">
         <div className="flex justify-between items-start mb-6">
+           <Toaster position="top-center" visibleToasts={1} duration={3000} richColors />
           <div>
             <h1 className="text-2xl font-bold text-blue-900 flex items-center gap-2">
               📅 Crear Meta de Ahorro
@@ -51,11 +87,11 @@ const Goals: React.FC = () => {
 
           <div className="grid md:grid-cols-2 gap-4">
             <input
-              name="name"
+              name="goal_name"
               type="text"
               placeholder="Nombre de la meta"
               className="w-full border rounded px-4 py-2 text-sm"
-              value={form.name}
+              value={form.goal_name}
               onChange={handleChange}
               required
             />
@@ -73,22 +109,38 @@ const Goals: React.FC = () => {
               <option value="ocio">Ocio</option>
               <option value="estudios">Estudios</option>
             </select>
-
             <input
-              name="target"
+              name="description"
+              type="text"
+              placeholder="Nombre de la meta"
+              className="w-full border rounded px-4 py-2 text-sm"
+              value={form.description}
+              onChange={handleChange}
+              required
+            />
+            <input
+              name="target_amount"
               type="number"
               placeholder="Monto objetivo ($)"
               className="w-full border rounded px-4 py-2 text-sm"
-              value={form.target}
+              value={form.target_amount}
               onChange={handleChange}
               required
             />
 
             <input
-              name="deadline"
+              name="start_date"
               type="date"
               className="w-full border rounded px-4 py-2 text-sm"
-              value={form.deadline}
+              value={form.start_date}
+              onChange={handleChange}
+              required
+            />
+            <input
+              name="end_date"
+              type="date"
+              className="w-full border rounded px-4 py-2 text-sm"
+              value={form.end_date}
               onChange={handleChange}
               required
             />
@@ -96,6 +148,7 @@ const Goals: React.FC = () => {
 
           <div className="flex justify-center pt-2">
             <button
+            onClick={saveGoal}
               type="submit"
               className="bg-[#2563EB] hover:bg-[#1E40AF] text-white font-medium px-6 py-2 rounded"
             >

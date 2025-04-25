@@ -40,14 +40,20 @@ const Login: React.FC = () => {
     
   }else{
     let response: string | null = null;
-    resToken = await FirebaseAuthService.loginAndGetToken(email, password);
-    response = await ApiService.login("auth/login");
+  resToken = await FirebaseAuthService.loginAndGetToken(email, password);
+   response = await ApiService.login("auth/login");
+    console.log(response);
     if (resToken) {
       localStorage.setItem("login", JSON.stringify({
         login: true,
         token: resToken,
+      }));
+
+      localStorage.setItem("user", JSON.stringify({
+        user: true,
         personData:response
       }));
+
         navigate("/dashboard");
     } else {
     toast.error("Incorrect username or password ");

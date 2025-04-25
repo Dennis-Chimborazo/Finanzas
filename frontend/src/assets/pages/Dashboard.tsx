@@ -7,6 +7,7 @@ import AddContribution from '../components/AddContribution';
 import BalanceCard from '../components/BalanceCard';
 import { useGoals } from '../context/GoalsContext';
 
+
 const Dashboard: React.FC = () => {
   const { goals, contributions, getGoalContributions } = useGoals();
 
@@ -43,7 +44,9 @@ const Dashboard: React.FC = () => {
         {/* Section: Goals Overview */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {goals.length === 0 ? (
+            <>
             <p className="text-gray-600 col-span-full">Aún no has creado metas.</p>
+            </>
           ) : (
             goals.map((goal, index) => {
               const goalContributions = contributions.filter(c => c.goalName === goal.name);
