@@ -2,18 +2,18 @@ import { ConflictException, Injectable, NotFoundException, ServiceUnavailableExc
 import { CreateAccountDto } from './dto/create-account.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { PeopleService } from 'src/people/people.service';
 import { Person } from 'src/people/entities/person.entity';
 
 @Injectable()
 export class AccountService {
 
-  
 
-  async  findById(accountId: number) {
-    const accountFinded=await this.accountRepository.findOneBy({accountId:accountId});
-    if(!accountFinded) throw new NotFoundException('enter an existing account');
+
+  async findById(accountId: number) {
+    const accountFinded = await this.accountRepository.findOneBy({ accountId: accountId });
+    if (!accountFinded) throw new NotFoundException('enter an existing account');
     return accountFinded;
   }
   constructor(
@@ -21,49 +21,53 @@ export class AccountService {
     private accountRepository: Repository<Account>,
     private readonly peopleService: PeopleService,
   ) { }
-  async createAccountBanc(createAccountDto: CreateAccountDto) {
+  async createAccountBanc(createAccountDto: CreateAccountDto, queryRunner?: QueryRunner) {
     const peopleFound = await this.peopleService.findOneById(createAccountDto.personId);
-    const accountfinded = await this.findAccountByTypeAndUserId(createAccountDto.accountType, peopleFound.personId);
 
-    if (accountfinded) throw new ConflictException(`You already have an account of type: ${createAccountDto.accountType}`);
-    // Create a new query runner for managing the transaction
-    const querryRunner = await this.accountRepository.manager.connection.createQueryRunner();
-
-    // Start the transaction
-    await querryRunner.startTransaction();
-
+    if (createAccountDto.accountType !== 'meta') {
+      const existing = await this.findAccountByTypeAndUserId(createAccountDto.accountType, peopleFound.personId);
+      if (existing) throw new ConflictException(`You already have an account of type: ${createAccountDto.accountType}`);
+    }
+  
+    const shouldManageTransaction = !queryRunner;
+    if (!queryRunner) {
+      queryRunner = this.accountRepository.manager.connection.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+    }
+  
     try {
-      const preparedAccount = this.accountRepository.create({
+      const account = this.accountRepository.create({
         ...createAccountDto,
         personId: peopleFound,
       });
-
-      const accountCreated = await querryRunner.manager.save(preparedAccount);
-
-      if (!accountCreated) throw new NotFoundException('The account could not be created');
-
-      let cero = "0";
+  
+      const accountCreated = await queryRunner.manager.save(account);
+      if (!accountCreated) throw new NotFoundException('Account could not be created');
+  
+      let cero = '0';
       for (let i = 0; i < (accountCreated.accountId?.toString().length ?? 0); i++) {
-        cero = cero + "0";
+        cero = cero + '0';
       }
-
+  
       accountCreated.accountNumber = cero + accountCreated.accountId;
-      await querryRunner.manager.update(Account, accountCreated.accountId, accountCreated);
-
-      // Commit the transaction if everything goes well
-      await querryRunner.commitTransaction();
-
+      await queryRunner.manager.update(Account, accountCreated.accountId, accountCreated);
+  
+      if (shouldManageTransaction) {
+        await queryRunner.commitTransaction();
+      }
+  
       return accountCreated;
     } catch (error) {
-      console.log(error);
-
-      // Roll back the transaction in case of any error
-      await querryRunner.rollbackTransaction();
-
-      throw new ServiceUnavailableException('try again');
+      console.error(error);
+      if (shouldManageTransaction) {
+        await queryRunner.rollbackTransaction();
+      }
+      throw new ServiceUnavailableException('Try again later');
     } finally {
-      // Release the query runner to free up resources
-      await querryRunner.release();
+      if (shouldManageTransaction) {
+        await queryRunner.release();
+      }
     }
   }
 
@@ -80,4 +84,6 @@ export class AccountService {
       .getOne();
   }
 
+
+ 
 }

@@ -2,7 +2,6 @@ import { Person } from "src/people/entities/person.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity({ name: 'accounts' })
-@Unique(['accountType','personId'])
 export class Account {
     @PrimaryGeneratedColumn()
     accountId?: number;
