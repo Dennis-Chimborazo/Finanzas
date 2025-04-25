@@ -5,7 +5,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 @Entity({name:'contributions'})
 export class Contribution {
     @PrimaryGeneratedColumn()
-    contribution_id:number;
+    contribution_id?:number;
     @Column("decimal",{precision:10,scale:2})
     amount:number
     @Column()
@@ -13,7 +13,7 @@ export class Contribution {
     @Column()
     contributionType:string;  // Type of contribution ('goal' or 'account').
     @ManyToOne(()=>SavingsGoal,(sg)=>sg.goal_id)
-    goalId:SavingsGoal;
+    goalId:SavingsGoal | null;
     @ManyToOne(()=>Account,(ac)=>ac.accountId)
-    accountId:Account;
+    accountId:Account | null;
 }
