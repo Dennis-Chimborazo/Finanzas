@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import FirebaseAuthService from '../../util/firebasetoken';
 import {Toaster,toast} from "sonner";
 
-
-
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
