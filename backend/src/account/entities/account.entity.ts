@@ -1,23 +1,26 @@
 import { Person } from "src/people/entities/person.entity";
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { SavingsGoal } from "src/savings_goal/entities/savings_goal.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
-@Entity({name:'accounts'})
+@Entity({ name: 'accounts' })
 export class Account {
     @PrimaryGeneratedColumn()
-    accountId:number;
+    accountId?: number;
+    @Column({ default: null })
+    accountNumber?: string;
     @Column()
-    accountNumber:string;
+    accountType: string; //type-->scheduled, transactional savings
     @Column()
-    accountType:string; //type-->scheduled, transactional savings
+    status: string;
     @Column()
-    status:string;
-    @Column()
-    openingDate:Date;
-    @Column()
-    closingDate:Date;
-    @Column("decimal",{precision:10,scale:2})
-    current_balance:number;
-    @ManyToOne(()=>Person,(person)=>person.personId)
-    @JoinColumn({name:'person_id'})
-    personId:Person
+    openingDate: Date;
+    @Column({ default: null })
+    closingDate?: Date;
+    @Column("decimal", { precision: 10, scale: 2, default: 0 })
+    current_balance: number;
+    @ManyToOne(() => Person, (person) => person.personId)
+    @JoinColumn({ name: 'person_id' })
+    personId: Person;
+    @OneToMany(() => SavingsGoal, (savingsGoal) => savingsGoal.account)
+    savingsGoals: SavingsGoal[];  // Aquí defines la relación uno a muchos con SavingsGoal
 }
