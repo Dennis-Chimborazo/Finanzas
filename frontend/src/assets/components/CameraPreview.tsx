@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 
 interface CameraPreviewProps {
   onCapture: (imageData: string) => void;
+  className?: string;
 }
 
-const CameraPreview: React.FC<CameraPreviewProps> = ({ onCapture }) => {
+const CameraPreview: React.FC<CameraPreviewProps> = ({ onCapture, className }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [streaming, setStreaming] = useState(false);
@@ -43,7 +44,7 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({ onCapture }) => {
       if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imageData = canvas.toDataURL('image/png');
-        onCapture(imageData); // Callback al padre
+        onCapture(imageData);
       }
     }
   };
@@ -54,7 +55,7 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({ onCapture }) => {
         ref={videoRef}
         autoPlay
         playsInline
-        className="rounded-lg w-full max-w-sm shadow border"
+        className={`rounded-lg shadow border ${className ?? 'w-full max-w-sm'}`}
       />
       <canvas ref={canvasRef} className="hidden" />
       <button

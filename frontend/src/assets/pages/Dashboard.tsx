@@ -12,6 +12,8 @@ const Dashboard: React.FC = () => {
 
   // Calcular total acumulado
   const totalContributions = contributions.reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
+  
+  
 
   return (
     <div className="min-h-screen flex bg-[#F9FAFB]">
