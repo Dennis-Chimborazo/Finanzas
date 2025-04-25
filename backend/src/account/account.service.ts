@@ -8,6 +8,14 @@ import { Person } from 'src/people/entities/person.entity';
 
 @Injectable()
 export class AccountService {
+
+  
+
+  async  findById(accountId: number) {
+    const accountFinded=await this.accountRepository.findOneBy({accountId:accountId});
+    if(!accountFinded) throw new NotFoundException('enter an existing account');
+    return accountFinded;
+  }
   constructor(
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
