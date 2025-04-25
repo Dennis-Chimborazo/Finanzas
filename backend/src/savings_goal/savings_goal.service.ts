@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SavingsGoal } from './entities/savings_goal.entity';
 import { Repository } from 'typeorm';
 import { AccountService } from 'src/account/account.service';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class SavingsGoalService {
@@ -11,18 +12,19 @@ export class SavingsGoalService {
     @InjectRepository(SavingsGoal)
     private goalRepository: Repository<SavingsGoal>,
     private readonly accountService: AccountService,
+    private readonly emailService: EmailService,
   ) { }
   async findById(goalId: number) {
     const goalFinded = await this.goalRepository.findOne({
-        where: { goal_id: goalId },
-        relations: ['account'] // Here we specify that we want to load the 'account' relation
+      where: { goal_id: goalId },
+      relations: ['account'] // Here we specify that we want to load the 'account' relation
     });
 
     if (!goalFinded) throw new NotFoundException('enter an existing goal');
     return goalFinded;
-}
+  }
 
-  async create(createSavingsGoalDto: CreateSavingsGoalDto) {
+  async create(createSavingsGoalDto: CreateSavingsGoalDto,email:string) {
     // Create a query runner for managing the transaction manually
     const queryRunner = this.goalRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
@@ -53,6 +55,11 @@ export class SavingsGoalService {
 
       // Commit transaction if all operations succeed
       await queryRunner.commitTransaction();
+      // Schedule the reminder
+      this.emailService.scheduleReminder(
+        email, 
+        preparedGoal.goal_name
+      );
       return goalCreated;
     } catch (error) {
       // Roll back transaction if any operation fails
