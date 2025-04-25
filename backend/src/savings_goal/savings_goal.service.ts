@@ -13,10 +13,15 @@ export class SavingsGoalService {
     private readonly accountService: AccountService,
   ) { }
   async findById(goalId: number) {
-    const goalFinded = await this.goalRepository.findOneBy({ goal_id: goalId });
+    const goalFinded = await this.goalRepository.findOne({
+        where: { goal_id: goalId },
+        relations: ['account'] // Here we specify that we want to load the 'account' relation
+    });
+
     if (!goalFinded) throw new NotFoundException('enter an existing goal');
     return goalFinded;
-  }
+}
+
   async create(createSavingsGoalDto: CreateSavingsGoalDto) {
     // Create a query runner for managing the transaction manually
     const queryRunner = this.goalRepository.manager.connection.createQueryRunner();
