@@ -19,6 +19,7 @@ export class AccountService {
         .select([
           'sg.goal_id',
           'sg.goal_name',
+          'sg.target_amount',
           'a.accountNumber',
           'a.accountType',
           'a.current_balance',
@@ -37,6 +38,7 @@ export class AccountService {
         accountType: account.accountType,
         current_balance: account.current_balance,
         status: account.status,
+        avance:(account.current_balance/account.savingsGoals[0]?.target_amount)*100
       }));
 
       return result;
