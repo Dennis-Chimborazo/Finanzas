@@ -2,11 +2,32 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FirebaseAuthService from '../../util/firebasetoken';
 import {Toaster,toast} from "sonner";
+import ApiService from "../service/ApiService";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
+
+  interface PersonData {
+    personId: number;
+    identificationType: string;
+    dni: string;
+    name: string;
+    lastName: string;
+    DateOfBirth: string;
+    addres: string;
+    phoneNumber: string;
+    profileFotoUrl: string;
+  }
+  
+  interface CustomTokenPayload {
+    userId: number;
+    firebaseUid: string;
+    email: string;
+    personId: PersonData;
+  }
+  
   
   const navigate = useNavigate();
 
@@ -18,13 +39,16 @@ const Login: React.FC = () => {
     toast.error("Complete all required fields");
     
   }else{
+    let response: string | null = null;
     resToken = await FirebaseAuthService.loginAndGetToken(email, password);
+    response = await ApiService.login("auth/login");
     if (resToken) {
-      localStorage.setItem("login",JSON.stringify({
+      localStorage.setItem("login", JSON.stringify({
         login: true,
-        token: resToken
+        token: resToken,
+        personData:response
       }));
-
+        navigate("/dashboard");
     } else {
     toast.error("Incorrect username or password ");
     }

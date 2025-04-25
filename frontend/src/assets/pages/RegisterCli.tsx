@@ -14,14 +14,14 @@ const RegisterCli: React.FC = () => {
   const auth = getAuth();
 
   const [form, setForm] = useState({
-    identificationType: 'Ecuadorian ID',
-    idNumber: '',
-    name: '',
-    lastName: '',
-    dateOfBirth: '',
-    address: '',
-    phoneNumber: '',
-    profileFotoUrl: '',
+    identificationType: "DNI",
+    dni: "", 
+    name: "",
+    lastName: "",
+    DateOfBirth: "", 
+    addres: "", 
+    phoneNumber: "",
+    profileFotoUrl: "",
   });
 
   const [accountdata, setAccountData] = useState({
@@ -52,8 +52,8 @@ const RegisterCli: React.FC = () => {
 
   const checkFields = () => {
     if (form.identificationType==''||form.name==''||form.lastName==''||
-        form.dateOfBirth==''|| form.address==''|| form.profileFotoUrl==''||
-        form.phoneNumber==''||form.idNumber==''
+        form.DateOfBirth==''|| form.addres==''|| form.profileFotoUrl==''||
+        form.phoneNumber==''||form.phoneNumber==''
      ) {
       toast.error("All fields are required");
        return false;
@@ -62,30 +62,31 @@ const RegisterCli: React.FC = () => {
 
   }
   const saveUser = async ()=>{
-        
+      
+            
     if (checkFields()) {
     if (verifyPasswords() && verifyEmail()) {
         let response: string | null = null;// Aquí puedes usar let porque luego asignarás el valor
         let resToken: string | null = null;
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, "Validar2@gmail.com", "valida23");
+            const userCredential = await createUserWithEmailAndPassword(auth, accountdata.email, accountdata.passwordOne);
             const user = userCredential.user;
             const token = await user.getIdToken(); // Get the token
             resToken = token; // Store the token
+            response = await ApiService.save("auth/register",form);
+
             localStorage.setItem("login", JSON.stringify({
                 login: true,
-                token: resToken
+                token: resToken,
+                personData:response
             }));
-         response = await ApiService.save("auth/register",form);
-         navigate("/home");
+         navigate("/dashboard");
         } catch (error) {
             console.error("Error signing in:", error);
         }
-        
         }
     }
 
-     
   }
 
   const handleChangeAccount = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -212,9 +213,9 @@ const RegisterCli: React.FC = () => {
               <input type="text" name="name" placeholder="First Name" value={form.name} onChange={handleChange} className="w-full border px-4 py-2 rounded text-sm" required />
               <input type="text" name="lastName" placeholder="Last Name" value={form.lastName} onChange={handleChange} className="w-full border px-4 py-2 rounded text-sm" required />
             </div>
-            <input type="text" name="idNumber" placeholder="ID number" value={form.idNumber} onChange={handleChange} className="w-full border px-4 py-2 rounded text-sm" required />
-            <input type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={handleChange} className="w-full border px-4 py-2 rounded text-sm" required />
-            <input type="text" name="address" placeholder="Address" value={form.address} onChange={handleChange} className="w-full border px-4 py-2 rounded text-sm" required />
+            <input type="text" name="dni" placeholder="ID number" value={form.dni} onChange={handleChange} className="w-full border px-4 py-2 rounded text-sm" required />
+            <input type="date" name="DateOfBirth" value={form.DateOfBirth} onChange={handleChange} className="w-full border px-4 py-2 rounded text-sm" required />
+            <input type="text" name="addres" placeholder="Address" value={form.addres} onChange={handleChange} className="w-full border px-4 py-2 rounded text-sm" required />
             <input type="tel" name="phoneNumber" placeholder="Phone Number" value={form.phoneNumber} onChange={handleChange} className="w-full border px-4 py-2 rounded text-sm" required />
             <input type="email" name="email" placeholder="Email" value={accountdata.email} onChange={handleChangeAccount} className="w-full border px-4 py-2 rounded text-sm" required />
             <input type="password" name="passwordOne" placeholder="Password" value={accountdata.passwordOne} onChange={handleChangeAccount} className="w-full border px-4 py-2 rounded text-sm" required />

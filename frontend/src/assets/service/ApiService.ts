@@ -14,15 +14,29 @@ const getToken = (): string => {
   }
 };
 
+const getId = (): number | null => {
+    const loginData = localStorage.getItem("login");
+  
+    if (loginData) {
+      const parsedData = JSON.parse(loginData);
+  
+      if (parsedData && parsedData.personData && parsedData.personData.personId) {
+        return parsedData.personData.personId;
+      }
+    }
+  
+    return null;
+  };
+  
 class ApiService {
   static async checkout(getApi: string, navigate: NavigateFunction): Promise<void> {
     const token = getToken();
 
     try {
-      const response: AxiosResponse = await axios.get(apiUrl +"/"+getApi, {
+      const response: AxiosResponse = await axios.get(apiUrl+getApi, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `${token}`,
         },
       });
 
@@ -41,9 +55,18 @@ class ApiService {
 
   static async save<T>(postApi: string, form: T): Promise<any> {
     const token = getToken();
-    console.log("Desde ApiService el token: ")
-     console.log(token)
     const response: AxiosResponse = await axios.post(apiUrl + postApi, form, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+      },
+    });
+    return response.data;
+  }
+  
+  static async login(postApi: string): Promise<any> {
+    const token = getToken();
+    const response: AxiosResponse = await axios.post(apiUrl + postApi, {}, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `${token}`,
@@ -57,7 +80,7 @@ class ApiService {
     const response: AxiosResponse = await axios.get(apiUrl + `${getApi}/${id}`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: ` ${token}`,
       },
     });
     return Array.isArray(response.data) ? response.data : [];
@@ -68,7 +91,7 @@ class ApiService {
     const response: AxiosResponse = await axios.put(apiUrl+ "/"+ putApi+"/"+id, form, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `${token}`,
       },
     });
     return response.data;
@@ -79,7 +102,7 @@ class ApiService {
     const response: AxiosResponse = await axios.delete(apiUrl + "/"+  deleteApi +"/"+id, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: ` ${token}`,
       }
     });
     return response.data;
