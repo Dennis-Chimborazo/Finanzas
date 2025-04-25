@@ -6,8 +6,8 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  //const firebaseGuard = app.get(FirebaseGuard);
-  //app.useGlobalGuards(firebaseGuard);
+  const firebaseGuard = app.get(FirebaseGuard);
+  app.useGlobalGuards(firebaseGuard);
 
   // Global configuration for the ValidationPipe
   app.useGlobalPipes(new ValidationPipe({

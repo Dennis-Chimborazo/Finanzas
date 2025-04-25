@@ -32,6 +32,21 @@ export class EmailService {
     }
   }
 
+   // Schedule reminder dynamically - sends an email every 2 minutes
+   scheduleReminder(to: string, nameMeta: string) {
+    const sevenDays = 1000 * 60 * 60 * 24 * 7; // 7 days in milliseconds
+
+    // Send the first reminder immediately (or on a condition)
+    this.sendReminder(to, nameMeta);
+
+    // Set interval every 2 minutes for reminders
+    setInterval(() => {
+      this.sendReminder(to, nameMeta);
+    }, sevenDays);
+  }
+
+
+
   // Method to send the email
   async sendReminder(to: string, name_meta: string) {
     const subject = `⏳ ¡No olvides registrar tu aporte en "${name_meta}"!`;
