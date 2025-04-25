@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
@@ -11,46 +11,43 @@ import { Contribution } from 'src/contribution/entities/contribution.entity';
 export class AccountService {
 
 
- async findAllAccountsByIdPerson(id: number) {
-  try {
-    // Create a query to get accounts with their related savings goals and optional contributions
-    const accounts = await this.accountRepository
-      .createQueryBuilder('a')
-      .select([
-        'sg.goal_id',
-        'sg.goal_name',
-        'a.accountNumber',
-        'a.accountType',
-        'a.current_balance',
-        'a.status',
-      ])
-      .innerJoin('a.savingsGoals', 'sg')  // Only include accounts that have savings goals
-      .leftJoinAndSelect('sg.contributions', 'c')  // Optionally include contributions if they exist
-      .where('a.personId = :id', { id })  // Filter accounts by person ID
-      .getMany();
+  async findAllAccountsByIdPerson(id: number) {
+    try {
+      // Create a query to get accounts with their related savings goals and optional contributions
+      const accounts = await this.accountRepository
+        .createQueryBuilder('a')
+        .select([
+          'sg.goal_id',
+          'sg.goal_name',
+          'sg.target_amount',
+          'a.accountNumber',
+          'a.accountType',
+          'a.current_balance',
+          'a.status',
+        ])
+        .innerJoin('a.savingsGoals', 'sg')  // Only include accounts that have savings goals
+        .leftJoinAndSelect('sg.contributions', 'c')  // Optionally include contributions if they exist
+        .where('a.personId = :id', { id })  // Filter accounts by person ID
+        .getMany();
 
-    // Format the result to only include needed fields from the first savings goal
-    const result = accounts.map(account => ({
-      goal_id: account.savingsGoals[0]?.goal_id,
-      goal_name: account.savingsGoals[0]?.goal_name,
-      accountNumber: account.accountNumber,
-      accountType: account.accountType,
-      current_balance: account.current_balance,
-      status: account.status,
-    }));
+      // Format the result to only include needed fields from the first savings goal
+      const result = accounts.map(account => ({
+        goal_id: account.savingsGoals[0]?.goal_id,
+        goal_name: account.savingsGoals[0]?.goal_name,
+        accountNumber: account.accountNumber,
+        accountType: account.accountType,
+        current_balance: account.current_balance,
+        status: account.status,
+        avance:(account.current_balance/account.savingsGoals[0]?.target_amount)*100
+      }));
 
-    return result;
-  } catch (error) {
-    console.error(error);
-    // Throw a service error if something goes wrong
-    throw new ServiceUnavailableException('Try again later');
+      return result;
+    } catch (error) {
+      console.error(error);
+      // Throw a service error if something goes wrong
+      throw new ServiceUnavailableException('Try again later');
+    }
   }
-}
-
-  
-
-
-
 
   async findById(accountId: number) {
     const accountFinded = await this.accountRepository.findOneBy({ accountId: accountId });
@@ -125,6 +122,49 @@ export class AccountService {
       .getOne();
   }
 
+  async updateAccountAmount(account: Account, amount: number) {
+    try {
+      // If the account is not found, throw an exception
+      if (!account) {
+        throw new NotFoundException('Account not found');
+      }
+  
+      // Ensure that both current_balance and amount are numbers
+      const currentBalance: number = parseFloat(account.current_balance.toString());
+      const newAmount: number = parseFloat(amount.toString());
+  
+      // If the current balance or the new amount is not a number, throw an error
+      if (isNaN(currentBalance) || isNaN(newAmount)) {
+        throw new BadRequestException('Invalid balance or amount');
+      }
+  
+      // Calculate the new balance by adding the amount
+      const balance: number = currentBalance + newAmount;
+  
+      // Optionally, round the balance to 2 decimal places for precision
+      const roundedBalance: number = Math.round(balance * 100) / 100;
+  
+      // Update the account's balance
+      account.current_balance = roundedBalance;
+  
+      // If accountId is undefined, throw an error
+      if (account.accountId === undefined) {
+        throw new NotFoundException('Account ID is undefined');
+      }
+  
+      // Save the updated account with the new balance
+      const updatedAccount = await this.accountRepository.update(account.accountId, account);
+  
+      // Return the updated account
+      return updatedAccount;
+  
+    } catch (error) {
+      // Handle any errors that occur during the process
+      console.error(error);
+      throw new ServiceUnavailableException('Failed to update account balance');
+    }
+  }
+  
 
 
 }
