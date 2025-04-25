@@ -12,23 +12,4 @@ export class ContributionController {
     return this.contributionService.create(createContributionDto);
   }
 
-  @Get()
-  findAll() {
-    return this.contributionService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.contributionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateContributionDto: UpdateContributionDto) {
-    return this.contributionService.update(+id, updateContributionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.contributionService.remove(+id);
-  }
 }
