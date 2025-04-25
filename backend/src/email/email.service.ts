@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import path from 'path';
+import puppeteer from 'puppeteer';
+import * as fs from 'fs';
+import { ContributionPdfDTO } from 'src/contribution/dto/contribution.pdf.dto';
 
 @Injectable()
 export class EmailService {
@@ -32,8 +36,8 @@ export class EmailService {
     }
   }
 
-   // Schedule reminder dynamically - sends an email every 2 minutes
-   scheduleReminder(to: string, nameMeta: string) {
+  // Schedule reminder dynamically - sends an email every 2 minutes
+  scheduleReminder(to: string, nameMeta: string) {
     const sevenDays = 1000 * 60 * 60 * 24 * 7; // 7 days in milliseconds
 
     // Send the first reminder immediately (or on a condition)
@@ -69,4 +73,93 @@ export class EmailService {
 
     await this.sendMail(to, subject, text, html);
   }
+
+
+
+
+  async generatePdfFromContributions(data: ContributionPdfDTO[], fileName: string): Promise<string> {
+    const htmlTableRows = data.map(item => `
+    <tr>
+      <td>${item.goal_name}</td>
+      <td>$${item.amount.toFixed(2)}</td>
+      <td>${new Date(item.contribution_date).toLocaleString()}</td>
+    </tr>
+  `).join('');
+
+    const htmlContent = `
+    <html>
+      <head>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+          }
+          h2 {
+            color: #4CAF50;
+            text-align: center;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+          }
+          th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: center;
+          }
+          th {
+            background-color: #f2f2f2;
+            color: #333;
+          }
+        </style>
+      </head>
+      <body>
+        <h2>📋 Reporte de Aportes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Meta</th>
+              <th>Monto</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${htmlTableRows}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `;
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+
+    const filePath = path.resolve(__dirname, fileName);
+    await page.pdf({ path: filePath, format: 'A4' });
+
+    await browser.close();
+    return filePath;
+  }
+
+  async sendContributionReport(to: string, data: ContributionPdfDTO[]) {
+    const pdfPath = await this.generatePdfFromContributions(data, 'aporte-reporte.pdf');
+  
+    const mailOptions = {
+      from: `<${process.env.EMAIL_ADDRES}>`,
+      to,
+      subject: '📄 Tu reporte de aportes',
+      text: 'Adjunto encontrarás un resumen en PDF con tus aportes registrados.',
+      attachments: [
+        {
+          filename: 'aporte-reporte.pdf',
+          path: pdfPath,
+        },
+      ],
+    };
+  
+    await this.transporter.sendMail(mailOptions);
+    fs.unlinkSync(pdfPath); // Eliminar archivo temporal
+  }
+  
 }

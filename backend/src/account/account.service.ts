@@ -9,6 +9,7 @@ import { Contribution } from 'src/contribution/entities/contribution.entity';
 
 @Injectable()
 export class AccountService {
+  
 
 
   async findAllAccountsByIdPerson(id: number) {

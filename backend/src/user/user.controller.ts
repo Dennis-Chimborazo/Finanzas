@@ -10,4 +10,5 @@ export class UserController {
     return this.userService.findAllAccounts(id);
   }
 
+  
 }

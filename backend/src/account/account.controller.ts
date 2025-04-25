@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Query, ParseIntPipe } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 
@@ -10,4 +10,6 @@ export class AccountController {
   create(@Body() createAccountDto: CreateAccountDto) {
     return this.accountService.createAccountBanc(createAccountDto);
   }
+ 
+
 }
