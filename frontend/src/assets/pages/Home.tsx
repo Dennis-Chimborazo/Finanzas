@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
 const Home = () => {
+  const navigate = useNavigate();
   const [goalType, setGoalType] = useState('');
   const [target, setTarget] = useState('');
   const [saved, setSaved] = useState('');
@@ -165,9 +167,12 @@ const Home = () => {
         </div>
 
         <div className="text-center mt-8">
-          <button className="bg-blue-300 hover:bg-blue-400 text-gray-800 font-semibold px-6 py-2 rounded shadow transition">
-            Open an account
-          </button>
+        <button
+        onClick={() => navigate('/register')}
+        className="bg-blue-300 hover:bg-blue-400 text-gray-800 font-semibold px-6 py-2 rounded shadow transition"
+      >
+        Open an account
+      </button>
         </div>
       </main>
     </div>
