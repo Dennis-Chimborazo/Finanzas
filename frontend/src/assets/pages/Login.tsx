@@ -41,7 +41,7 @@ const Login: React.FC = () => {
   }else{
     let response: string | null = null;
   resToken = await FirebaseAuthService.loginAndGetToken(email, password);
-   response = await ApiService.login("auth/login");
+  // response = await ApiService.login("auth/login");
     console.log(response);
     if (resToken) {
       localStorage.setItem("login", JSON.stringify({

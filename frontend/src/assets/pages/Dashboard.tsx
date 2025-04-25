@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect,useState} from 'react';
 import Sidebar from '../components/Sidebar';
 import GoalCard from '../components/GoalCard';
 import GoalProgress from '../components/GoalProgress';
@@ -6,10 +6,54 @@ import Suggestions from '../components/Suggestions';
 import AddContribution from '../components/AddContribution';
 import BalanceCard from '../components/BalanceCard';
 import { useGoals } from '../context/GoalsContext';
+import DataTable from "react-data-table-component";
+import ApiService from "../service/ApiService";
 
 
 const Dashboard: React.FC = () => {
   const { goals, contributions, getGoalContributions } = useGoals();
+  interface Meta {
+    goal_id: number;
+    goal_name: string;
+    accountNumber: string;
+    accountType: string;
+    current_balance: string;
+    status: string;
+    avance: number;
+  }
+  const [metas, setMetas] = useState<Meta[]>([]);
+
+  interface GoalRow {
+    goal_id: number;
+    goal_name: string;
+    accountNumber: string;
+    accountType: string;
+    current_balance: string;
+    status: string;
+    avance: number;
+  }
+  useEffect(() => {
+    const cargarDatos = async () => {
+      const mant = await ApiService.search("user", '3');
+      setMetas(mant); // ✅ ya matchea el tipo
+      console.log(mant)
+    };
+    cargarDatos();
+  }, []);
+  
+
+
+  const columnas: {
+    name: string;
+    selector: (row: GoalRow) => string | number;
+  }[] = [
+    { name: "Número de cuenta", selector: (row) => row.accountNumber },
+    { name: "Mantenimiento", selector: (row) => row.accountType },
+    { name: "Nombre del objetivo", selector: (row) => row.goal_name },
+    { name: "Estado", selector: (row) => row.status },
+    { name: "Saldo", selector: (row) => row.current_balance },
+  ];
+  
 
   // Calcular total acumulado
   const totalContributions = contributions.reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
@@ -43,22 +87,14 @@ const Dashboard: React.FC = () => {
 
         {/* Section: Goals Overview */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {goals.length === 0 ? (
-            <>
-            <p className="text-gray-600 col-span-full">Aún no has creado metas.</p>
-            </>
-          ) : (
-            goals.map((goal, index) => {
-              const goalContributions = contributions.filter(c => c.goalName === goal.name);
-              return (
-                <GoalCard
-                  key={index}
-                  goal={goal}
-                  contributions={goalContributions}
-                />
-              );
-            })
-          )}
+        <DataTable
+          pagination
+          paginationPerPage={10}
+          columns={columnas}
+          data={metas}
+          noDataComponent="No Metas creadas"
+          persistTableHead>
+        </DataTable>
         </section>
 
         {/* Section: Progress and Suggestions */}

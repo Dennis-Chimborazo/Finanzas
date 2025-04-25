@@ -77,7 +77,7 @@ class ApiService {
 
   static async search(getApi: string, id: string | number): Promise<any[]> {
     const token = getToken();
-    const response: AxiosResponse = await axios.get(apiUrl + `${getApi}/${id}`, {
+    const response: AxiosResponse = await axios.get(apiUrl + `${getApi}?id=${id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: ` ${token}`,
