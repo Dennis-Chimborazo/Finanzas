@@ -15,6 +15,8 @@ async function bootstrap() {
     whitelist: true, // Removes properties that are not specified in the DTO
     forbidNonWhitelisted: true, // Throws an error if an undefined property is present in the DTO
   }));
+  
+  app.enableCors(); // Esto permite todo — no recomendado en producción
 
 
   await app.listen(process.env.PORT ?? 3000);

@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { NavigateFunction } from "react-router-dom";
 
-const apiUrl = "http://localhost:4000/";
+const apiUrl = "http://localhost:3000/";
 
 const getToken = (): string => {
   const tokenInfo = localStorage.getItem("login");
@@ -17,6 +17,7 @@ const getToken = (): string => {
 class ApiService {
   static async checkout(getApi: string, navigate: NavigateFunction): Promise<void> {
     const token = getToken();
+
     try {
       const response: AxiosResponse = await axios.get(apiUrl +"/"+getApi, {
         headers: {
@@ -40,10 +41,12 @@ class ApiService {
 
   static async save<T>(postApi: string, form: T): Promise<any> {
     const token = getToken();
-    const response: AxiosResponse = await axios.post(apiUrl +"/"+ postApi, form, {
+    console.log("Desde ApiService el token: ")
+     console.log(token)
+    const response: AxiosResponse = await axios.post(apiUrl + postApi, form, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `${token}`,
       },
     });
     return response.data;
