@@ -9,11 +9,9 @@ export class EmailController {
   async sendEmail(
     @Body() body: { to: string; subject: string; text: string; html?: string },
   ) {
-    await this.emailService.sendMail(
+    await this.emailService.sendReminder(
       body.to,
       body.subject,
-      body.text,
-      body.html,
     );
     return { message: 'Correo enviado exitosamente' };
   }
