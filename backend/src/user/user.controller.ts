@@ -7,11 +7,6 @@ import { CreatePersonDto } from 'src/people/dto/create-person.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('/createPersonData')
-  createPerson(@Body() createPersonDto:CreatePersonDto,@Request() req ){
-    return this.userService.createUserData(createPersonDto,req.userUid);
-  }
-
   @Get()
   findAll() {
     return this.userService.findAll();
