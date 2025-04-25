@@ -1,5 +1,5 @@
 // GoalCard.tsx
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import { differenceInWeeks, isAfter, parseISO } from 'date-fns';
 
 interface Goal {
@@ -42,6 +42,21 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, contributions = [] }) => {
   else if (recommendedWeekly > originalWeekly * 2) barColor = 'bg-red-500';
   else if (recommendedWeekly > originalWeekly) barColor = 'bg-yellow-400';
   else barColor = 'bg-green-400';
+
+  
+const getId = (): number | null => {
+  const loginData = localStorage.getItem("user");
+
+  if (loginData) {
+    const parsedData = JSON.parse(loginData);
+
+    if (parsedData && parsedData.personData && parsedData.personData.personId) {
+      return parsedData.personData.personId;
+    }
+  }
+
+  return null;
+};
 
   return (
     <div className="bg-white rounded shadow p-4 border border-gray-200">

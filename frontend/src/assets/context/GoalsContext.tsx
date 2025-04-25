@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
+import ApiService from "../service/ApiService";
+
 
 interface Goal {
   name: string;
@@ -38,7 +46,10 @@ export const GoalsProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addContribution = (contribution: Contribution) => {
-    const contributionWithDate = { ...contribution, date: new Date().toISOString() };
+    const contributionWithDate = {
+      ...contribution,
+      date: new Date().toISOString(),
+    };
     setContributions((prev) => [...prev, contributionWithDate]);
   };
 
@@ -76,6 +87,40 @@ export const GoalsProvider = ({ children }: { children: ReactNode }) => {
     return weeks > 0 ? +(remaining / weeks).toFixed(2) : remaining;
   };
 
+
+
+useEffect(() => {
+  const fetchGoals = async () => {
+    if (goals.length === 0 && contributions.length === 0) {
+      try {
+        const response = await ApiService.search("user", '3');
+    console.log(response)
+
+
+        const apiGoals: Goal[] = response.map((item: any) => ({
+          name: item.goal_name,
+          category: 'meta',
+          target: '5000', // o item.target si existe
+          deadline: '2025-12-31',
+          createdAt: new Date().toISOString()
+        }));
+
+        const apiContributions: Contribution[] = response.map((item: any) => ({
+          goalName: item.goal_name,
+          amount: item.current_balance,
+          date: new Date().toISOString()
+        }));
+
+        setGoals(apiGoals);
+        setContributions(apiContributions);
+      } catch (error) {
+        console.error('Error fetching goals from API:', error);
+      }
+    }
+  };
+
+  fetchGoals();
+}, []);
   return (
     <GoalsContext.Provider
       value={{
@@ -87,7 +132,7 @@ export const GoalsProvider = ({ children }: { children: ReactNode }) => {
         getGoalContributions,
         getLastContributionDate,
         getWeeksRemaining,
-        getWeeklyRecommendation
+        getWeeklyRecommendation,
       }}
     >
       {children}
