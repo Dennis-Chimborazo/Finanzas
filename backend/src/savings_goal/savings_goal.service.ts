@@ -24,7 +24,7 @@ export class SavingsGoalService {
     return goalFinded;
   }
 
-  async create(createSavingsGoalDto: CreateSavingsGoalDto,email:string) {
+  async create(createSavingsGoalDto: CreateSavingsGoalDto, email: string) {
     // Create a query runner for managing the transaction manually
     const queryRunner = this.goalRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
@@ -57,7 +57,7 @@ export class SavingsGoalService {
       await queryRunner.commitTransaction();
       // Schedule the reminder
       this.emailService.scheduleReminder(
-        email, 
+        email,
         preparedGoal.goal_name
       );
       return goalCreated;
@@ -71,4 +71,30 @@ export class SavingsGoalService {
     }
   }
 
+  async generatedReportPdfInEmail(id: number, email: string) {
+
+    const data = await this.findContributionsByAccountId(id);
+
+    await this.emailService.sendContributionReport(email, data);
+  }
+  async findContributionsByAccountId(accountId: number) {
+    const rawData = await this.goalRepository
+      .createQueryBuilder('goal')
+      .innerJoin('goal.contributions', 'contribution')
+      .select([
+        // Selecting the required fields with aliases to access them clearly from raw results
+        'goal.goal_name AS goal_goal_name',
+        'contribution.amount AS contribution_amount',
+        'contribution.contribution_date AS contribution_contribution_date',
+      ])
+      .where('goal.account = :accountId', { accountId })
+      .getRawMany();
+
+    // Mapping raw result fields to match the DTO format expected by the PDF generator
+    return rawData.map(item => ({
+      goal_name: item.goal_goal_name,
+      amount: parseFloat(item.contribution_amount),
+      contribution_date: item.contribution_contribution_date,
+    }));
+  }
 }
