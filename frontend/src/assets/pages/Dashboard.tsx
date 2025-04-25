@@ -12,6 +12,7 @@ import ApiService from "../service/ApiService";
 
 const Dashboard: React.FC = () => {
   const { goals, contributions, getGoalContributions } = useGoals();
+  
   interface Meta {
     goal_id: number;
     goal_name: string;
@@ -36,7 +37,6 @@ const Dashboard: React.FC = () => {
     const cargarDatos = async () => {
       const mant = await ApiService.search("user", '3');
       setMetas(mant); // ✅ ya matchea el tipo
-      console.log(mant)
     };
     cargarDatos();
   }, []);
@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
     selector: (row: GoalRow) => string | number;
   }[] = [
     { name: "Número de cuenta", selector: (row) => row.accountNumber },
-    { name: "Mantenimiento", selector: (row) => row.accountType },
+    { name: "Tipo de cuenta", selector: (row) => row.accountType },
     { name: "Nombre del objetivo", selector: (row) => row.goal_name },
     { name: "Estado", selector: (row) => row.status },
     { name: "Saldo", selector: (row) => row.current_balance },

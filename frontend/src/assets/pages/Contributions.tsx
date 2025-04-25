@@ -1,13 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useGoals } from '../context/GoalsContext';
+import ApiService from "../service/ApiService";
+import Select from "react-select";
 
 const Contributions: React.FC = () => {
+  interface OptionType {
+    value: number;
+    label: string;
+  }
+  
   const { goals, contributions, addContribution } = useGoals();
+  const [selNuevaOpcion, setSelNuevaOpcion] = useState<OptionType | null>(null);
+
+  
   const [form, setForm] = useState({
-    goalName: '',
-    amount: '',
+    goalId: '',
+    contributionType:"goal",
+    amount: 0,
   });
+   interface Meta {
+      goal_id: number;
+      goal_name: string;
+      accountNumber: string;
+      accountType: string;
+      current_balance: string;
+      status: string;
+      avance: number;
+    }
+    const [metas, setMetas] = useState<Meta[]>([]);
+
+  useEffect(() => {
+    const cargarDatos = async () => {
+      const mant = await ApiService.search("user", '3');
+      setMetas(mant); // ✅ ya matchea el tipo
+      console.log(mant)
+    };
+    cargarDatos();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -17,17 +47,50 @@ const Contributions: React.FC = () => {
     e.preventDefault();
 
     const today = new Date().toISOString().split('T')[0];
-    if (!form.goalName || !form.amount) return;
+    if (!form.goalId || !form.amount) return;
 
     addContribution({
-      goalName: form.goalName,
+      goalName: form.goalId,
       amount: form.amount,
       date: today
     });
 
-    alert(`Contribución de $${form.amount} agregada para "${form.goalName}"`);
-    setForm({ goalName: '', amount: '' });
+    alert(`Contribución de $${form.amount} agregada para "${form.goalId}"`);
+    setForm({ goalId: '', amount: '' });
   };
+
+  const valueCombo = (val: OptionType | null) => {
+    if (val) {
+      setSelNuevaOpcion(val);
+      setForm({
+        ...form,
+        goalId: val.value,
+      });
+    }
+  };
+  
+
+  const save = async () => {
+    const num = Number(form.amount);
+    
+    // Verifica si la conversión es válida (si es NaN, no lo envíes)
+    if (isNaN(num)) {
+      console.error('Amount is not a valid number');
+      return;
+    }
+  
+    const updatedForm = { ...form, amount: num };
+  
+    console.log(updatedForm); // Verifica el estado actualizado
+  
+    try {
+      const response = await ApiService.save("contribution", updatedForm);
+      console.log(response); // Aquí manejas la respuesta del servidor
+    } catch (error) {
+      console.error('Error saving the contribution:', error);
+    }
+  };
+  
 
   return (
     <div className="min-h-screen flex bg-[#F9FAFB]">
@@ -52,27 +115,23 @@ const Contributions: React.FC = () => {
         >
           <div className="grid md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Meta</label>
-              <select
-                name="goalName"
-                value={form.goalName}
-                onChange={handleChange}
-                className="w-full border px-4 py-2 rounded text-sm"
-                required
-              >
-                <option value="">-- Selecciona una meta --</option>
-                {goals.map((goal, index) => (
-                  <option key={index} value={goal.name}>
-                    {goal.name}
-                  </option>
-                ))}
-              </select>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Meta</label>
+            <Select
+              options={metas.map((m) => ({
+                value: m.goal_id,
+                label: m.goal_name,
+              }))}
+              onChange={valueCombo}
+              value={selNuevaOpcion}
+              placeholder="Selecciona una actividad"
+            />
+
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Cantidad ($)</label>
               <input
-                type="number"
+                type="text"
                 name="amount"
                 value={form.amount}
                 onChange={handleChange}
@@ -86,6 +145,7 @@ const Contributions: React.FC = () => {
           <button
             type="submit"
             className="w-full bg-[#2563EB] hover:bg-[#1E40AF] text-white font-semibold py-2 rounded transition"
+            onClick={save}
           >
             Guardar Contribución
           </button>

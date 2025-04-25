@@ -5,6 +5,7 @@ import ApiService from "../service/ApiService";
 import {Toaster,toast} from "sonner";
 
 const Goals: React.FC = () => {
+
   const { goals, addGoal } = useGoals();
   const [form, setForm] = useState({
     goal_name: '',
@@ -15,6 +16,7 @@ const Goals: React.FC = () => {
     end_date: '',
     personId: 0,
   });
+  
 
   const getId = (): number | null => {
     const loginData = localStorage.getItem("user");
