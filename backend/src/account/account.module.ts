@@ -8,6 +8,7 @@ import { PeopleModule } from 'src/people/people.module';
 @Module({
   controllers: [AccountController],
   providers: [AccountService],
-  imports:[TypeOrmModule.forFeature([Account]),PeopleModule]
+  imports:[TypeOrmModule.forFeature([Account]),PeopleModule],
+  exports:[AccountService]
 })
 export class AccountModule {}

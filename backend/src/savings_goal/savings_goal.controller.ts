@@ -12,23 +12,4 @@ export class SavingsGoalController {
     return this.savingsGoalService.create(createSavingsGoalDto);
   }
 
-  @Get()
-  findAll() {
-    return this.savingsGoalService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.savingsGoalService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSavingsGoalDto: UpdateSavingsGoalDto) {
-    return this.savingsGoalService.update(+id, updateSavingsGoalDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.savingsGoalService.remove(+id);
-  }
 }
