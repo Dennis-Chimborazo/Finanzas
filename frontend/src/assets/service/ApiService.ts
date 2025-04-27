@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { NavigateFunction } from "react-router-dom";
 
-const apiUrl = "http://localhost:3000/";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // funcion para obtener el token almacenado en el localStore
 const getToken = (): string => {
