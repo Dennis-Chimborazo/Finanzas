@@ -1,6 +1,5 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import * as admin from 'firebase-admin';
-import * as serviceAccount from './ahorrometasfinancieras-firebase-adminsdk-fbsvc-dd0602cdf9.json';
 
 @Injectable()
 export class FirebaseService {
