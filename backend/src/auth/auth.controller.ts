@@ -12,6 +12,8 @@ export class AuthController {
   }
   @Post('/register')
   register(@Request() req,@Body() createPersonDTO:CreatePersonDto) {
+    console.log(createPersonDTO);
+    console.log(req);
     return this.authService.register(req.userUid,req.email,createPersonDTO);
   }
 
