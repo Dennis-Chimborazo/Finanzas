@@ -7,8 +7,8 @@ WORKDIR /app
 # Copiar archivos necesarios
 COPY package*.json ./
 
-# Instalar dependencias
-RUN npm install
+# Instalar dependencias de producción en la etapa de Build
+RUN npm install --production
 
 # Copiar el resto del código
 COPY . .
@@ -32,5 +32,5 @@ RUN npm install --only=production
 # Exponer el puerto (por defecto 3000 para NestJS)
 EXPOSE 3000
 
-# Comando para arrancar la app
-CMD ["node", "dist/main"]
+# Comando para arrancar la app con más memoria
+CMD ["node", "--max-old-space-size=4096", "dist/main"]
