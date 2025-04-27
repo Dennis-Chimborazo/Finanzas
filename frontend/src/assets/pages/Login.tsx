@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FirebaseAuthService from '../../util/firebasetoken';
-import {Toaster,toast} from "sonner";
+import { Toaster, toast } from "sonner";
 import ApiService from "../service/ApiService";
 
 const Login: React.FC = () => {
@@ -20,50 +20,57 @@ const Login: React.FC = () => {
     phoneNumber: string;
     profileFotoUrl: string;
   }
-  
+
   interface CustomTokenPayload {
     userId: number;
     firebaseUid: string;
     email: string;
     personId: PersonData;
   }
-  
-  
+
+
   const navigate = useNavigate();
 
   const login = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault(); 
+    e.preventDefault();
     let resToken: string | null = null;// Aquí puedes usar let porque luego asignarás el valor
 
-  if (email==''||password == '') { 
-    toast.error("Complete all required fields");
-    
-  }else{
-    let response: string | null = null;
-  resToken = await FirebaseAuthService.loginAndGetToken(email, password);
-  // response = await ApiService.login("auth/login");
-    console.log(response);
-    if (resToken) {
-      localStorage.setItem("login", JSON.stringify({
-        login: true,
-        token: resToken,
-      }));
+    if (email == '' || password == '') {
+      toast.error("Complete all required fields");
 
-      localStorage.setItem("user", JSON.stringify({
-        user: true,
-        personData:response
-      }));
+    } else {
+      //consumo el servicio de firebase para logearme y obtener el token
+      resToken = await FirebaseAuthService.loginAndGetToken(email, password);
+      if (resToken) {
+        localStorage.setItem("login", JSON.stringify({
+          login: true,
+          token: resToken,
+        }));
+        
+        //consumo el servicio de la api para obtener los datos del usuario
+        let response=await ApiService.login();
+        /**
+         * 
+         * console.log(response.personId.personId);
+         * 
+         * 
+         */
+        //almaceno el usuario en el localStore
+        localStorage.setItem("user", JSON.stringify({
+          user: true,
+          personData: response
+        }));
 
         navigate("/dashboard");
-    } else {
-    toast.error("Incorrect username or password ");
+      } else {
+        toast.error("Incorrect username or password ");
+      }
     }
-  }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-green-100 flex items-center justify-center px-4">
-        <Toaster position="top-center" visibleToasts={1} duration={3000} richColors />
+      <Toaster position="top-center" visibleToasts={1} duration={3000} richColors />
       <div className="grid grid-cols-1 md:grid-cols-2 w-full max-w-5xl bg-white rounded-xl shadow-xl overflow-hidden">
         {/* Illustration & Info */}
         <div className="bg-gradient-to-br from-green-200 to-green-100 p-10 flex flex-col justify-center">

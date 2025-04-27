@@ -4,6 +4,7 @@ import CameraPreview from "../components/CameraPreview";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { Toaster, toast } from "sonner";
 import ApiService from "../service/ApiService";
+import FirebaseAuthService from "../../util/firebasetoken";
 
 
 const RegisterCli: React.FC = () => {
@@ -21,7 +22,7 @@ const RegisterCli: React.FC = () => {
     DateOfBirth: "",
     addres: "",
     phoneNumber: "",
-    profileFotoUrl: "",
+    profileFotoUrl: "ssss",
   });
 
   const [accountdata, setAccountData] = useState({
@@ -58,8 +59,8 @@ const RegisterCli: React.FC = () => {
       !form.lastName ||
       !form.DateOfBirth ||
       !form.addres ||
-      !form.phoneNumber ||
-      !form.profileFotoUrl
+      !form.phoneNumber 
+   //   !form.profileFotoUrl
     ) {
       toast.error("All fields are required");
       return false;
@@ -67,34 +68,33 @@ const RegisterCli: React.FC = () => {
     return true;
   };
 
+   //Función para guardar el usuario
   const saveUser = async () => {
     if (checkFields() && verifyPasswords() && verifyEmail()) {
       let response: string | null = null;
       let resToken: string | null = null;
-      try {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          accountdata.email,
-          accountdata.passwordOne
-        );
-        const user = userCredential.user;
-        const token = await user.getIdToken();
-        resToken = token;
-        response = await ApiService.save("auth/register", form);
 
-        localStorage.setItem(
-          "login",
-          JSON.stringify({
-            login: true,
-            token: resToken,
-            personData: response,
-          })
-        );
-        navigate("/dashboard");
-      } catch (error) {
-        console.error("Error signing in:", error);
-        toast.error("Registration failed");
-      }
+      //obtengo el token de firebase
+      const jwtFirebase = await FirebaseAuthService.registerWithLoginAndGetToken(accountdata.email, accountdata.passwordOne);
+      resToken = jwtFirebase;
+      // almaceno el token en el localstorage
+      localStorage.setItem(
+        "login",
+        JSON.stringify({
+          token: resToken,
+        })
+      );
+      //llamo al servicio de api para guardar el usuario
+      response = await ApiService.save("auth/register", form);
+      localStorage.setItem(
+        "login",
+        JSON.stringify({
+          login: true,
+          token: resToken,
+          personData: response,
+        })
+      );
+      navigate("/dashboard");
     }
   };
 
@@ -111,7 +111,7 @@ const RegisterCli: React.FC = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setPreview(imageUrl);
-      setForm({ ...form, profileFotoUrl: imageUrl });
+     // setForm({ ...form, profileFotoUrl: imageUrl });
     }
   };
 
@@ -174,15 +174,15 @@ const RegisterCli: React.FC = () => {
               <div className="flex flex-col items-center justify-center">
                 {showCamera ? (
                   <div>
-                    
+
                     <CameraPreview
-  className="w-63 h-44"
-  onCapture={(imageData) => {
-    setPreview(imageData);
-    setForm({ ...form, profileFotoUrl: imageData });
-    setShowCamera(false);
-  }}
-/>
+                      className="w-63 h-44"
+                      onCapture={(imageData) => {
+                        setPreview(imageData);
+                   //     setForm({ ...form, profileFotoUrl: imageData });
+                        setShowCamera(false);
+                      }}
+                    />
 
                     <button
                       type="button"
@@ -252,22 +252,22 @@ const RegisterCli: React.FC = () => {
                   className="w-full border px-4 py-2 rounded text-sm"
                   required
                 />
-                 <input
-              type="text"
-              name="dni"
-              placeholder="Número de identificación"
-              value={form.dni}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded text-sm"
-              required
-            />
-            
+                <input
+                  type="text"
+                  name="dni"
+                  placeholder="Número de identificación"
+                  value={form.dni}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-2 rounded text-sm"
+                  required
+                />
+
 
               </div>
             </div>
 
             {/* Resto del formulario */}
-            
+
             <input
               type="date"
               name="DateOfBirth"

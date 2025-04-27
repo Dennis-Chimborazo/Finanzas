@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useGoals } from '../context/GoalsContext';
 import ApiService from "../service/ApiService";
@@ -9,33 +9,33 @@ const Contributions: React.FC = () => {
     value: number;
     label: string;
   }
-  
+
   const { goals, contributions, addContribution } = useGoals();
   const [selNuevaOpcion, setSelNuevaOpcion] = useState<OptionType | null>(null);
 
-  
+
   const [form, setForm] = useState({
     goalId: '',
-    contributionType:"goal",
+    contributionType: "goal",
     amount: 0,
   });
-   interface Meta {
-      goal_id: number;
-      goal_name: string;
-      accountNumber: string;
-      accountType: string;
-      current_balance: string;
-      status: string;
-      avance: number;
-    }
-    const [metas, setMetas] = useState<Meta[]>([]);
+  interface Meta {
+    goal_id: number;
+    goal_name: string;
+    accountNumber: string;
+    accountType: string;
+    current_balance: string;
+    status: string;
+    avance: number;
+  }
+  const [metas, setMetas] = useState<Meta[]>([]);
 
+  const cargarDatos = async () => {
+    const mant = await ApiService.search("user");
+    setMetas(mant);
+  };
+  
   useEffect(() => {
-    const cargarDatos = async () => {
-      const mant = await ApiService.search("user", '3');
-      setMetas(mant); // ✅ ya matchea el tipo
-      console.log(mant)
-    };
     cargarDatos();
   }, []);
 
@@ -43,37 +43,27 @@ const Contributions: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const today = new Date().toISOString().split('T')[0];
-    if (!form.goalId || !form.amount) return;
-
-    addContribution({
-      goalName: form.goalId,
-      amount: form.amount,
-      date: today
-    });
-
-    alert(`Contribución de $${form.amount} agregada para "${form.goalId}"`);
-    setForm({ goalId: '', amount: '' });
+    await save(); // llama a save directamente
+    setForm({ goalId: '', amount: 0, contributionType: "goal" });
+    setSelNuevaOpcion(null); // Limpia el Select también
   };
-
+  
   const valueCombo = (val: OptionType | null) => {
     if (val) {
       setSelNuevaOpcion(val);
       setForm({
         ...form,
-        goalId: val.value,
+        goalId: val.value.toString(),
       });
     }
   };
-  
+
 
   const save = async () => {
     const num = Number(form.amount);
-    
-    // Verifica si la conversión es válida (si es NaN, no lo envíes)
+  
     if (isNaN(num)) {
       console.error('Amount is not a valid number');
       return;
@@ -81,16 +71,16 @@ const Contributions: React.FC = () => {
   
     const updatedForm = { ...form, amount: num };
   
-    console.log(updatedForm); // Verifica el estado actualizado
-  
     try {
-      const response = await ApiService.save("contribution", updatedForm);
-      console.log(response); // Aquí manejas la respuesta del servidor
+      await ApiService.save("contribution", updatedForm);
+      cargarDatos(); 
+      alert("Contribución guardada correctamente");
     } catch (error) {
       console.error('Error saving the contribution:', error);
     }
   };
   
+
 
   return (
     <div className="min-h-screen flex bg-[#F9FAFB]">
@@ -115,16 +105,16 @@ const Contributions: React.FC = () => {
         >
           <div className="grid md:grid-cols-2 gap-4 mb-4">
             <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Meta</label>
-            <Select
-              options={metas.map((m) => ({
-                value: m.goal_id,
-                label: m.goal_name,
-              }))}
-              onChange={valueCombo}
-              value={selNuevaOpcion}
-              placeholder="Selecciona una actividad"
-            />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Meta</label>
+              <Select
+                options={metas.map((m) => ({
+                  value: m.goal_id,
+                  label: m.goal_name,
+                }))}
+                onChange={valueCombo}
+                value={selNuevaOpcion}
+                placeholder="Selecciona una actividad"
+              />
 
             </div>
 

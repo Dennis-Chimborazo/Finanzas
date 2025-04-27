@@ -1,4 +1,4 @@
-import React, {useEffect,useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import GoalCard from '../components/GoalCard';
 import GoalProgress from '../components/GoalProgress';
@@ -12,7 +12,7 @@ import ApiService from "../service/ApiService";
 
 const Dashboard: React.FC = () => {
   const { goals, contributions, getGoalContributions } = useGoals();
-  
+
   interface Meta {
     goal_id: number;
     goal_name: string;
@@ -33,32 +33,37 @@ const Dashboard: React.FC = () => {
     status: string;
     avance: number;
   }
+
+  /**
+   * Se carga las metas desde la api
+   */
   useEffect(() => {
     const cargarDatos = async () => {
-      const mant = await ApiService.search("user", '3');
-      setMetas(mant); // ✅ ya matchea el tipo
+      const mant = await ApiService.search("user");
+      console.log(mant);
+      setMetas(mant);
     };
     cargarDatos();
   }, []);
-  
+
 
 
   const columnas: {
     name: string;
     selector: (row: GoalRow) => string | number;
   }[] = [
-    { name: "Número de cuenta", selector: (row) => row.accountNumber },
-    { name: "Tipo de cuenta", selector: (row) => row.accountType },
-    { name: "Nombre del objetivo", selector: (row) => row.goal_name },
-    { name: "Estado", selector: (row) => row.status },
-    { name: "Saldo", selector: (row) => row.current_balance },
-  ];
-  
+      { name: "Número de cuenta", selector: (row) => row.accountNumber },
+      { name: "Tipo de cuenta", selector: (row) => row.accountType },
+      { name: "Nombre del objetivo", selector: (row) => row.goal_name },
+      { name: "Estado", selector: (row) => row.status },
+      { name: "Saldo", selector: (row) => row.current_balance },
+    ];
+
 
   // Calcular total acumulado
   const totalContributions = contributions.reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
-  
-  
+
+
 
   return (
     <div className="min-h-screen flex bg-[#F9FAFB]">
@@ -86,16 +91,18 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Section: Goals Overview */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <DataTable
-          pagination
-          paginationPerPage={10}
-          columns={columnas}
-          data={metas}
-          noDataComponent="No Metas creadas"
-          persistTableHead>
-        </DataTable>
+        <section className="bg-white p-6 rounded-lg shadow-md mb-8">
+          <DataTable
+            pagination
+            paginationPerPage={10}
+            columns={columnas}
+            data={metas}
+            customStyles={customStyles}
+            noDataComponent="No Metas creadas"
+            persistTableHead
+          />
         </section>
+
 
         {/* Section: Progress and Suggestions */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
@@ -112,6 +119,38 @@ const Dashboard: React.FC = () => {
       </div>
     </div>
   );
+};
+const customStyles = {
+  headCells: {
+    style: {
+      backgroundColor: '#1E3A8A', // azul oscuro
+      color: '#FFFFFF',
+      fontWeight: 'bold',
+      fontSize: '14px',
+    },
+  },
+  cells: {
+    style: {
+      padding: '16px',
+      fontSize: '14px',
+      color: '#1F2937', // gris oscuro
+    },
+  },
+  rows: {
+    style: {
+      backgroundColor: '#FFFFFF',
+      borderBottom: '1px solid #E5E7EB', // gris claro
+      '&:hover': {
+        backgroundColor: '#F3F4F6', // gris muy claro
+      },
+    },
+  },
+  pagination: {
+    style: {
+      borderTop: '1px solid #E5E7EB',
+      paddingTop: '8px',
+    },
+  },
 };
 
 export default Dashboard;

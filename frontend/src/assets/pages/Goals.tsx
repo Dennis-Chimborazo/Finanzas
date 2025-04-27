@@ -25,7 +25,7 @@ const Goals: React.FC = () => {
       const parsedData = JSON.parse(loginData);
   
       if (parsedData && parsedData.personData && parsedData.personData.personId) {
-        return parsedData.personData.personId;
+        return parsedData.personData.personId.personId;
       }
     }
   
@@ -46,19 +46,20 @@ const Goals: React.FC = () => {
 
   const saveGoal = async () => {
     if (form.category==''||form.description==''||form.end_date==''||form.goal_name==''
-      ||form.personId==0||form.start_date==''||form.target_amount==0  ) {
+      ||form.start_date==''||form.target_amount==0  ) {
             toast.error("Complete all required fields");
     }else{
     const id = getId();
     const dataToSend = {
       ...form,
       target_amount: Number(form.target_amount),
-      personId: Number(id.personId),
+      personId: id,
     };
   
     try {
       const response = await ApiService.save("savings-goal", dataToSend);
       console.log("Meta guardada:", response);
+      toast.success("Meta guardada exitosamente");
     } catch (error) {
       console.error("Error al guardar la meta:", error);
     }
